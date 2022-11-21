@@ -5,6 +5,9 @@ import { SESSION_NAME } from 'constants';
 import behavior from './reducers/behaviorReducer';
 import messages from './reducers/messagesReducer';
 import metadata from './reducers/metadataReducer';
+import agent_handoff from '../agent_handoff';
+window.globalVar = 0;
+import globalVal from '../globalVar';
 
 import { getLocalSession } from './reducers/helper';
 import * as actionTypes from './actions/actionTypes';
@@ -37,13 +40,16 @@ function initStore(
     }
     const emitMessage = (payload) => {
       const emit = () => {
-        socket.emit(
-          'user_uttered', {
-            message: payload,
-            customData: socket.customData,
-            session_id: sessionId
-          }
-        );
+        if (globalVal.connected_to_bot){
+          socket.emit(
+            'user_uttered', {
+              message: payload,
+              customData: socket.customData,
+              session_id: sessionId
+            }
+          );
+        };
+        agent_handoff(payload, 'Client');
         store.dispatch({
           type: actionTypes.ADD_NEW_USER_MESSAGE,
           text: 'text',

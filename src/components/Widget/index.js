@@ -2,6 +2,9 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import agent_handoff from 'agent_handoff.js';
+import io from 'socket.io-client';
+import globalVal from '/globalVar';
 import {
   toggleFullScreen,
   toggleChat,
@@ -54,6 +57,12 @@ class Widget extends Component {
 
 
   componentDidMount() {
+    const socket2 = io('http://localhost:5000');
+    socket2.on('display_event-2', message => {
+      console.log('Received msg from agent:', message)
+      this.handleBotUtterance({text: message}, false);
+    })
+
     const { connectOn, autoClearCache, storage, dispatch, defaultHighlightAnimation } = this.props;
 
     // add the default highlight css to the document
@@ -229,7 +238,7 @@ class Widget extends Component {
     }
   }
 
-  handleBotUtterance(botUtterance) {
+  handleBotUtterance(botUtterance, not_from_agent=true) {
     const { dispatch } = this.props;
     this.clearCustomStyle();
     this.eventListenerCleaner();
@@ -239,7 +248,16 @@ class Widget extends Component {
     if (botUtterance.metadata && botUtterance.metadata.customCss) {
       newMessage.customCss = botUtterance.metadata.customCss;
     }
-    this.handleMessageReceived(newMessage);
+    if(newMessage.text==='Human Handoff'){
+      this.handleMessageReceived({text: 'Connected to Real Agent'});
+      globalVal.connected_to_bot = false;
+      const socket2 = io('http://localhost:5000');
+      socket2.emit('triggered_handoff')
+      console.log('handoff triggered')
+    } else {
+      this.handleMessageReceived(newMessage);
+    }
+    if (not_from_agent) agent_handoff(newMessage.text, 'Bot');
   }
 
   addCustomsEventListeners(pageEventCallbacks) {
@@ -399,7 +417,7 @@ class Widget extends Component {
           // storage.clear();
           // Store the received session_id to storage
 
-          storeLocalSession(storage, SESSION_NAME, remoteId);
+          //storeLocalSession(storage, SESSION_NAME, remoteId);
           dispatch(pullSession());
           if (sendInitPayload) {
             this.trySendInitPayload();
@@ -582,31 +600,34 @@ class Widget extends Component {
 
   render() {
     return (
-      <WidgetLayout
-        toggleChat={() => this.toggleConversation()}
-        toggleFullScreen={() => this.toggleFullScreen()}
-        onSendMessage={event => this.handleMessageSubmit(event)}
-        title={this.props.title}
-        subtitle={this.props.subtitle}
-        customData={this.props.customData}
-        profileAvatar={this.props.profileAvatar}
-        showCloseButton={this.props.showCloseButton}
-        showFullScreenButton={this.props.showFullScreenButton}
-        hideWhenNotConnected={this.props.hideWhenNotConnected}
-        fullScreenMode={this.props.fullScreenMode}
-        isChatOpen={this.props.isChatOpen}
-        isChatVisible={this.props.isChatVisible}
-        badge={this.props.badge}
-        embedded={this.props.embedded}
-        params={this.props.params}
-        openLauncherImage={this.props.openLauncherImage}
-        inputTextFieldHint={this.props.inputTextFieldHint}
-        closeImage={this.props.closeImage}
-        customComponent={this.props.customComponent}
-        displayUnreadCount={this.props.displayUnreadCount}
-        showMessageDate={this.props.showMessageDate}
-        tooltipPayload={this.props.tooltipPayload}
-      />
+      <>
+      <h1>kabil</h1>
+        <WidgetLayout
+          toggleChat={() => this.toggleConversation()}
+          toggleFullScreen={() => this.toggleFullScreen()}
+          onSendMessage={event => this.handleMessageSubmit(event)}
+          title={this.props.title}
+          subtitle={this.props.subtitle}
+          customData={this.props.customData}
+          profileAvatar={this.props.profileAvatar}
+          showCloseButton={this.props.showCloseButton}
+          showFullScreenButton={this.props.showFullScreenButton}
+          hideWhenNotConnected={this.props.hideWhenNotConnected}
+          fullScreenMode={this.props.fullScreenMode}
+          isChatOpen={this.props.isChatOpen}
+          isChatVisible={this.props.isChatVisible}
+          badge={this.props.badge}
+          embedded={this.props.embedded}
+          params={this.props.params}
+          openLauncherImage={this.props.openLauncherImage}
+          inputTextFieldHint={this.props.inputTextFieldHint}
+          closeImage={this.props.closeImage}
+          customComponent={this.props.customComponent}
+          displayUnreadCount={this.props.displayUnreadCount}
+          showMessageDate={this.props.showMessageDate}
+          tooltipPayload={this.props.tooltipPayload}
+        />
+      </>
     );
   }
 }

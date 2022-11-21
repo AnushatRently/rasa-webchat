@@ -124,7 +124,7 @@ export function storeLocalSession(storage, key, sid) {
     };
   }
   // Store updated session to storage
-  storage.setItem(key, JSON.stringify(session));
+  //storage.setItem(key, JSON.stringify(session));
 }
 
 export const storeMessageTo = storage => (conversation) => {
@@ -136,7 +136,7 @@ export const storeMessageTo = storage => (conversation) => {
     conversation: conversation.toJS(),
     lastUpdate: Date.now()
   };
-  storage.setItem(SESSION_NAME, JSON.stringify(newSession));
+  //storage.setItem(SESSION_NAME, JSON.stringify(newSession));
   return conversation;
 };
 
@@ -150,7 +150,7 @@ export const storeParamsTo = storage => (params) => {
     lastUpdate: Date.now(),
     version: 'PACKAGE_VERSION_TO_BE_REPLACED'
   };
-  storage.setItem(SESSION_NAME, JSON.stringify(newSession));
+  //storage.setItem(SESSION_NAME, JSON.stringify(newSession));
   return params;
 };
 
@@ -164,6 +164,6 @@ export const storeMetadataTo = storage => (metadata) => {
     metadata: metadata.toJS(),
     lastUpdate: Date.now()
   };
-  storage.setItem(SESSION_NAME, JSON.stringify(newSession));
+  //storage.setItem(SESSION_NAME, JSON.stringify(newSession));
   return metadata;
 };
