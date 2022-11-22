@@ -1,3 +1,4 @@
 export default {
-    connected_to_bot: true
+    connected_to_bot: true,
+    check: true
 };

@@ -257,7 +257,7 @@ class Widget extends Component {
     } else {
       this.handleMessageReceived(newMessage);
     }
-    if (not_from_agent) agent_handoff(newMessage.text, 'Bot');
+    if (not_from_agent) agent_handoff(newMessage, 'Bot');
   }
 
   addCustomsEventListeners(pageEventCallbacks) {
@@ -480,7 +480,31 @@ class Widget extends Component {
       // Only send initial payload if the widget is connected to the server but not yet initialized
 
       const sessionId = this.getSessionId();
-
+      
+      // Init Payload
+      if (globalVal.check) {
+        const newMessage={text: "Hey! This is Rently's Chat Bot. I can do the below mentioned operations",
+            quick_replies: [
+              {
+                content_type: 'text',
+                title: 'Create Account in Rently',
+                payload: '/create_account'
+              },
+              {
+                content_type: 'text',
+                title: 'Cancel My Tour',
+                payload: '/cancel_my_tour'
+              },
+              {
+                content_type: 'text',
+                title: 'Weather Info',
+                payload: '/ask_for_weather'
+              }          
+            ]}
+            this.handleMessageReceived(newMessage)
+            agent_handoff(newMessage, 'Bot')
+            globalVal.check=false
+      }
       // check that session_id is confirmed
       if (!sessionId) return;
 
@@ -601,7 +625,6 @@ class Widget extends Component {
   render() {
     return (
       <>
-      <h1>kabil</h1>
         <WidgetLayout
           toggleChat={() => this.toggleConversation()}
           toggleFullScreen={() => this.toggleFullScreen()}

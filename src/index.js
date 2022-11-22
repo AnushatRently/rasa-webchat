@@ -212,7 +212,7 @@ ConnectedWidget.propTypes = {
 };
 
 ConnectedWidget.defaultProps = {
-  title: 'Welcome',
+  title: 'FRIDAY Chatbot',
   customData: {},
   inputTextFieldHint: 'Type a message...',
   connectingText: 'Waiting for server...',
