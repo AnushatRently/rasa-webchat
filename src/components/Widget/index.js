@@ -57,7 +57,7 @@ class Widget extends Component {
 
 
   componentDidMount() {
-    const socket2 = io('http://localhost:5000');
+    const socket2 = io('http://3.234.144.111:5000');
     socket2.on('display_event-2', message => {
       console.log('Received msg from agent:', message)
       this.handleBotUtterance({text: message}, false);
@@ -251,7 +251,7 @@ class Widget extends Component {
     if(newMessage.text==='Human Handoff'){
       this.handleMessageReceived({text: 'Connected to Real Agent'});
       globalVal.connected_to_bot = false;
-      const socket2 = io('http://localhost:5000');
+      const socket2 = io('http://3.234.144.111:5000');
       socket2.emit('triggered_handoff')
       console.log('handoff triggered')
     } else {
