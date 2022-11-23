@@ -9,7 +9,7 @@ module.exports = [{
   // entry: ['babel-polyfill', './index.js'],
   entry: './umd.js',
   output: {
-    path: path.join(__dirname, '/lib'),
+    path: path.join(__dirname, '/example/lib'),
     filename: 'index.js',
     library: 'WebChat',
     libraryTarget: 'umd'
