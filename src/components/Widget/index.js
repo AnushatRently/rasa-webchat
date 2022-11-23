@@ -1,5 +1,5 @@
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import React, { Component } from 'react';
+import React, { Component, useRef } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import agent_handoff from 'agent_handoff.js';
@@ -57,13 +57,7 @@ class Widget extends Component {
 
 
   componentDidMount() {
-    const socket2 = io('http://3.234.144.111:5000');
-    socket2.on('display_event-2', message => {
-      console.log('Received msg from agent:', message)
-      this.handleBotUtterance({text: message}, false);
-    })
-
-    const { connectOn, autoClearCache, storage, dispatch, defaultHighlightAnimation } = this.props;
+        const { connectOn, autoClearCache, storage, dispatch, defaultHighlightAnimation } = this.props;
 
     // add the default highlight css to the document
     const styleNode = document.createElement('style');
@@ -249,11 +243,23 @@ class Widget extends Component {
       newMessage.customCss = botUtterance.metadata.customCss;
     }
     if(newMessage.text==='Human Handoff'){
-      this.handleMessageReceived({text: 'Connected to Real Agent'});
-      globalVal.connected_to_bot = false;
-      const socket2 = io('http://3.234.144.111:5000');
-      socket2.emit('triggered_handoff')
-      console.log('handoff triggered')
+      globalVal.socket_webchat = io('http://3.234.144.111:5000');
+      globalVal.socket_webchat.on('connect', () => {
+        globalVal.connected_to_bot = false;
+
+        globalVal.socket_webchat.on('display_event-2', message => {
+          console.log('Received msg from agent:', message)
+          this.handleBotUtterance({text: message}, false);
+        })
+
+        globalVal.socket_webchat.emit('triggered_handoff')
+        this.handleMessageReceived({text: 'Connected to real agent'});
+      });
+
+      globalVal.socket_webchat.on('disconnect', () => {
+        globalVal.connected_to_bot = true;
+        this.handleMessageReceived({text: 'Agent is disconnected. Returned to Bot'});
+      });
     } else {
       this.handleMessageReceived(newMessage);
     }
