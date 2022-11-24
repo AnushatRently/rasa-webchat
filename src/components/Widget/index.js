@@ -242,9 +242,8 @@ class Widget extends Component {
     if (botUtterance.metadata && botUtterance.metadata.customCss) {
       newMessage.customCss = botUtterance.metadata.customCss;
     }
-    console.log('History 1-->', newMessage.text)
     if(newMessage.quick_replies && newMessage.quick_replies['0']['title'] === 'Handoff'){
-      globalVal.socket_webchat = io('http://3.234.144.111/5000');
+      globalVal.socket_webchat = io('http://3.234.144.111:5000/');
       globalVal.socket_webchat.on('connect', () => {
         globalVal.connected_to_bot = false;
 
