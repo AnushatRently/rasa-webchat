@@ -244,7 +244,7 @@ class Widget extends Component {
     }
     console.log('History 1-->', newMessage.text)
     if(newMessage.quick_replies && newMessage.quick_replies['0']['title'] === 'Handoff'){
-      globalVal.socket_webchat = io('http://localhost:5000/');
+      globalVal.socket_webchat = io('http://3.234.144.111/5000');
       globalVal.socket_webchat.on('connect', () => {
         globalVal.connected_to_bot = false;
 
@@ -254,7 +254,6 @@ class Widget extends Component {
         })
 
         globalVal.socket_webchat.emit('triggered_handoff')
-        console.log("History --->", JSON.parse(newMessage.text))
         globalVal.socket_webchat.emit('history', JSON.parse(newMessage.text))
         this.handleMessageReceived({text: 'Connected to real agent'});
       });
