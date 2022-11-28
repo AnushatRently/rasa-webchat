@@ -257,7 +257,9 @@ class Widget extends Component {
         globalVal.socket_webchat.on('cancelled_handoff', (customerID) => {
           this.cancelHandoff(customerID)
         })
-
+        console.log(globalVal.customerID, newMessage.quick_replies['2']['title'], JSON.parse(newMessage.text))
+        window.gl = globalVal
+        window.me = newMessage
         globalVal.socket_webchat.emit('triggered_handoff', globalVal.customerID, newMessage.quick_replies['2']['title'], JSON.parse(newMessage.text))
         this.handleMessageReceived({text: 'Connected to real agent'});
       });
