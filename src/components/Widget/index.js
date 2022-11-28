@@ -242,29 +242,42 @@ class Widget extends Component {
     if (botUtterance.metadata && botUtterance.metadata.customCss) {
       newMessage.customCss = botUtterance.metadata.customCss;
     }
+    console.log('Message', newMessage)
     if(newMessage.quick_replies && newMessage.quick_replies['0']['title'] === 'Handoff'){
-      globalVal.socket_webchat = io('http://3.234.144.111:5000/');
+      globalVal.socket_webchat = io('http://localhost:5000/');
       globalVal.socket_webchat.on('connect', () => {
         globalVal.connected_to_bot = false;
-
-        globalVal.socket_webchat.on('display_event-2', message => {
-          console.log('Received msg from agent:', message)
-          this.handleBotUtterance({text: message}, false);
+        globalVal.customerID = newMessage.quick_replies['1']['title'];
+        
+        globalVal.socket_webchat.on('display_event-2', (message, customerID) => {
+          console.log('Check ', globalVal.customerID, customerID, globalVal.customerID === customerID)
+          if (globalVal.customerID === customerID) this.handleBotUtterance({text: message}, false);
         })
 
-        globalVal.socket_webchat.emit('triggered_handoff')
-        globalVal.socket_webchat.emit('history', JSON.parse(newMessage.text))
+        globalVal.socket_webchat.on('cancelled_handoff', (customerID) => {
+          this.cancelHandoff(customerID)
+        })
+
+        globalVal.socket_webchat.emit('triggered_handoff', globalVal.customerID, newMessage.quick_replies['2']['title'], JSON.parse(newMessage.text))
         this.handleMessageReceived({text: 'Connected to real agent'});
       });
 
       globalVal.socket_webchat.on('disconnect', () => {
         globalVal.connected_to_bot = true;
-        this.handleMessageReceived({text: 'Agent is disconnected. Returned to Bot'});
+        this.handleMessageReceived({text: 'Agent is not available right now. Returned to Bot'});
       });
     } else {
       this.handleMessageReceived(newMessage);
     }
     //if (not_from_agent) agent_handoff(newMessage, 'Bot');
+  }
+
+  cancelHandoff(customerID) {
+    if (globalVal.customerID === customerID) {
+      globalVal.connected_to_bot = true;
+      globalVal.socket_webchat.close()
+      globalVal.socket_webchat = null;
+    }
   }
 
   addCustomsEventListeners(pageEventCallbacks) {
