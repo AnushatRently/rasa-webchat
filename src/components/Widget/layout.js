@@ -27,6 +27,7 @@ const WidgetLayout = (props) => {
           title={props.title}
           subtitle={props.subtitle}
           sendMessage={props.onSendMessage}
+          voiceInput={props.onVoiceInput}
           profileAvatar={props.profileAvatar}
           toggleChat={props.toggleChat}
           isChatOpen={props.isChatOpen}

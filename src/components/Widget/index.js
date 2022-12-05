@@ -242,7 +242,7 @@ class Widget extends Component {
     if (botUtterance.metadata && botUtterance.metadata.customCss) {
       newMessage.customCss = botUtterance.metadata.customCss;
     }
-    console.log('Message', newMessage)
+    this.textToSpeech(newMessage.text)
     if(newMessage.quick_replies && newMessage.quick_replies['0']['title'] === 'Handoff'){
       globalVal.socket_webchat = io('http://3.234.144.111:5000/');
       globalVal.socket_webchat.on('connect', () => {
@@ -505,6 +505,7 @@ class Widget extends Component {
       
       // Init Payload
       if (globalVal.check) {
+        this.textToSpeech("Hey! This is Rently's Chat Bot. I can do the below mentioned operations")
         const newMessage={text: "Hey! This is Rently's Chat Bot. I can do the below mentioned operations",
             quick_replies: [
               {
@@ -535,6 +536,12 @@ class Widget extends Component {
       socket.emit('user_uttered', { message: initPayload, customData, session_id: sessionId });
       dispatch(initialize());
     }
+  }
+
+  textToSpeech(data) {
+    const msg = new SpeechSynthesisUtterance()
+    msg.text = data
+    window.speechSynthesis.speak(msg)
   }
 
   trySendTooltipPayload() {
@@ -637,11 +644,21 @@ class Widget extends Component {
   handleMessageSubmit(event) {
     event.preventDefault();
     const userUttered = event.target.message.value;
+    window.check1 = this.props
+    window.utter = addUserMessage(userUttered)
     if (userUttered) {
       this.props.dispatch(addUserMessage(userUttered));
       this.props.dispatch(emitUserMessage(userUttered));
     }
     event.target.message.value = '';
+  }
+
+  handleVoiceInput(event, data) {
+    window.check = this.props
+    window.data = data
+    const userUttered = data
+    addUserMessage(userUttered);
+    emitUserMessage(userUttered);
   }
 
   render() {
@@ -651,6 +668,7 @@ class Widget extends Component {
           toggleChat={() => this.toggleConversation()}
           toggleFullScreen={() => this.toggleFullScreen()}
           onSendMessage={event => this.handleMessageSubmit(event)}
+          onVoiceInput={this.props.dispatch}
           title={this.props.title}
           subtitle={this.props.subtitle}
           customData={this.props.customData}
