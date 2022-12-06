@@ -242,7 +242,6 @@ class Widget extends Component {
     if (botUtterance.metadata && botUtterance.metadata.customCss) {
       newMessage.customCss = botUtterance.metadata.customCss;
     }
-    this.textToSpeech(newMessage.text)
     if(newMessage.quick_replies && newMessage.quick_replies['0']['title'] === 'Handoff'){
       globalVal.socket_webchat = io('http://18.206.135.215:5000/');
       globalVal.socket_webchat.on('connect', () => {
