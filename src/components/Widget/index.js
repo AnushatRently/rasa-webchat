@@ -244,7 +244,7 @@ class Widget extends Component {
     }
     this.textToSpeech(newMessage.text)
     if(newMessage.quick_replies && newMessage.quick_replies['0']['title'] === 'Handoff'){
-      globalVal.socket_webchat = io('http://3.234.144.111:5000/');
+      globalVal.socket_webchat = io('http://18.206.135.215:5000/');
       globalVal.socket_webchat.on('connect', () => {
         globalVal.connected_to_bot = false;
         globalVal.customerID = newMessage.quick_replies['1']['title'];
@@ -262,14 +262,17 @@ class Widget extends Component {
         window.me = newMessage
         globalVal.socket_webchat.emit('triggered_handoff', globalVal.customerID, newMessage.quick_replies['2']['title'], JSON.parse(newMessage.text))
         this.handleMessageReceived({text: 'Connected to real agent'});
+        this.textToSpeech('Connected to real agent')
       });
 
       globalVal.socket_webchat.on('disconnect', () => {
         globalVal.connected_to_bot = true;
         this.handleMessageReceived({text: 'Agent is not available right now. Returned to Bot'});
+        this.textToSpeech('Agent is not available right now. Returned to Bot')
       });
     } else {
       this.handleMessageReceived(newMessage);
+      this.textToSpeech(newMessage.text)
     }
     //if (not_from_agent) agent_handoff(newMessage, 'Bot');
   }
