@@ -243,7 +243,7 @@ class Widget extends Component {
       newMessage.customCss = botUtterance.metadata.customCss;
     }
     if(newMessage.quick_replies && newMessage.quick_replies['0']['title'] === 'Handoff'){
-      globalVal.socket_webchat = io('http://friday.bluerently.com:5005/');
+      globalVal.socket_webchat = io('http://friday.bluerently.com:5000/');
       globalVal.socket_webchat.on('connect', () => {
         globalVal.connected_to_bot = false;
         globalVal.customerID = newMessage.quick_replies['1']['title'];
