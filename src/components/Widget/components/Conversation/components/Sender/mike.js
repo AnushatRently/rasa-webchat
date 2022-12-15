@@ -41,10 +41,9 @@ const TextToSpeech = props => {
             <br></br>
             <div>
                 <button id="voice_button" type="button" onClick={runSpeechRecognition}>
-                    Click Here to speak
+                    <img src="https://www.linkpicture.com/q/microphone-black-shape.png" width="15px"></img>
                 </button>
             </div>
-            <br></br>
             <br></br>
         </center>
     );
